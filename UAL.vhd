@@ -36,12 +36,12 @@ entity UAL is
            Y : in  STD_LOGIC_VECTOR (7 downto 0);
            sel : in  STD_LOGIC_VECTOR (2 downto 0);
            output : out  STD_LOGIC_VECTOR (7 downto 0);
-           Z : out  STD_LOGIC;
-           N : out  STD_LOGIC);
+           NZ : out  STD_LOGIC_VECTOR (1 downto 0));
 end UAL;
 
 architecture Behavioral of UAL is
 signal temporario: std_logic_vector(7 downto 0);
+signal N, Z : std_logic;
 begin
 	process (sel, X, Y)
 	begin
@@ -60,7 +60,8 @@ begin
 		else Z <= '0'; N <= '0';
 		end if;
 	end process;
-	
+	NZ(1) <= N;
+	NZ(0) <= Z;
 	output <= temporario;
 end Behavioral;
 
