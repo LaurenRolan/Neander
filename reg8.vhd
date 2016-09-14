@@ -42,16 +42,17 @@ signal saida: std_logic_vector(7 downto 0);
 begin
 process (clk, reset)
 begin
-	if(reset='1')then
-		saida<="00000000";
+	if(reset = '1')then
+		saida <= "00000000";
 	elsif(rising_edge(clk))then
-		if(load='1')then
-			saida<=A;
+		if(load = '1')then
+			saida <= A;
+		else saida <= saida; -- Esse else tem que existir, senão dá cocô.
 		end if;
 	end if;
 end process;
 
-F<=saida;
+F <= saida;
 
 end Behavioral;
 
