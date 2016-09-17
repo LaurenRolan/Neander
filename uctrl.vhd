@@ -70,14 +70,11 @@ architecture Behavioral of uctrl is
 type t_state is (fetch1,fetch2,fetch3,fetch4,sta1,lda1,add1,or1,and1,not1,jmp1,jn1,jz1,mul1,inc1,hlt1);
 signal estado: t_state;
 signal out_decoder: std_logic_vector(12 downto 0);
-signal saidas: std_logic_vector(12 downto 0);
+signal saida: std_logic_vector(12 downto 0);
 
 begin
 
 out_decoder<= do_nop & do_sta & do_lda & do_add & do_or & do_and & do_not & do_jmp & do_jn & do_jz & do_mul & do_inc & do_hlt;
--- Legenda----------------------------------------------------------------------------------------------------------------
---		  |  12	 |11downto9|    8    |      7       |    6    |  5  |     4   |     3    |    2    |     1    |    0
-saidas<=cargaAC &  selUAL & cargaPC & incrementaPC & cargaNZ & sel & cargaRI & cargaREM & do_read & do_write & cargaRDM;
 
 process(clk, reset)
 begin
@@ -90,20 +87,20 @@ begin
 			when fetch3 => estado<=fetch4;
 			when fetch4 =>
 				case out_decoder is
-					when 1 =>		estado<=hlt1;
-					when 2 =>		estado<=inc1;
-					when 4 =>		estado<=mul1;
-					when 8 =>		estado<=jz1;
-					when 16 =>		estado<=jn1;
-					when 32 =>		estado<=jmp1;
-					when 64 =>		estado<=not1;
-					when 128 =>		estado<=and1;
-					when 256 =>		estado<=or1;
-					when 512 =>		estado<=add1;
-					when 1024 =>	estado<=lda1;
-					when 2048 =>	estado<=sta1;
-					when 4096 =>	estado<=fetch1;				
-					when others => estado<=estado;
+					when "0000000000001" =>	estado<=hlt1;
+					when "0000000000010" =>	estado<=inc1;
+					when "0000000000100" =>	estado<=mul1;
+					when "0000000001000" =>	estado<=jz1;
+					when "0000000010000" =>	estado<=jn1;
+					when "0000000100000" =>	estado<=jmp1;
+					when "0000001000000" =>	estado<=not1;
+					when "0000010000000" =>	estado<=and1;
+					when "0000100000000" =>	estado<=or1;
+					when "0001000000000" =>	estado<=add1;
+					when "0010000000000" =>	estado<=lda1;
+					when "0100000000000" =>	estado<=sta1;
+					when "1000000000000" =>	estado<=fetch1;				
+					when others 			=> estado<=estado;
 				end case;
 			when others =>
 		end case;
@@ -121,6 +118,18 @@ begin
 							cargaRI<='0'; cargaREM<='0'; do_read<='0'; do_write<='0'; cargaRDM<='0';
 	end case;
 end process;
+	
+cargaAC<=saida(12);
+selUAL<=saida(11 downto 9);
+cargaPC<=saida(8);
+incrementaPC<=saida(7);
+cargaNZ<=saida(6);
+sel<=saida(5);
+cargaRI<=saida(4);
+cargaREM<=saida(3);
+do_read<=saida(2);
+do_write<=saida(1);
+cargaRDM<=saida(0);
 
 end Behavioral;
 
