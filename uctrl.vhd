@@ -36,19 +36,23 @@ entity uctrl is
     Port ( 
 			  reset: in std_logic;
 			  clk : in  STD_LOGIC;
-           do_nop : in  STD_LOGIC;
-           do_sta : in  STD_LOGIC;
-           do_lda : in  STD_LOGIC;
-           do_add : in  STD_LOGIC;
-           do_or : in  STD_LOGIC;
-           do_and : in  STD_LOGIC;
-           do_not : in  STD_LOGIC;
-           do_jmp : in  STD_LOGIC;
-           do_jn : in  STD_LOGIC;
-           do_jz : in  STD_LOGIC;
-           do_mul : in  STD_LOGIC;
-           do_inc : in  STD_LOGIC;
-           do_hlt : in  STD_LOGIC;
+	   -- Substituindo as 15 mil portas pelo "busão" out_decoder
+           --do_nop : in  STD_LOGIC;
+           --do_sta : in  STD_LOGIC;
+           --do_lda : in  STD_LOGIC;
+           --do_add : in  STD_LOGIC;
+           --do_or : in  STD_LOGIC;
+           --do_and : in  STD_LOGIC;
+           --do_not : in  STD_LOGIC;
+           --do_jmp : in  STD_LOGIC;
+           --do_jn : in  STD_LOGIC;
+           --do_jz : in  STD_LOGIC;
+           --do_mul : in  STD_LOGIC;
+           --do_inc : in  STD_LOGIC;
+           --do_hlt : in  STD_LOGIC;
+           out_decoder : in STD_LOGIC_VECTOR (12 downto 0);
+           
+           --A saída do registrador NZ é um vector de 1 downto 0. Precisa mudar o código abaixo?
            sinal_N : in  STD_LOGIC;
            sinal_Z : in  STD_LOGIC;
 			  cargaAC: out std_logic;
@@ -74,7 +78,7 @@ signal saida: std_logic_vector(12 downto 0);
 
 begin
 
-out_decoder<= do_nop & do_sta & do_lda & do_add & do_or & do_and & do_not & do_jmp & do_jn & do_jz & do_mul & do_inc & do_hlt;
+--out_decoder<= do_nop & do_sta & do_lda & do_add & do_or & do_and & do_not & do_jmp & do_jn & do_jz & do_mul & do_inc & do_hlt;
 
 process(clk, reset)
 begin
@@ -100,7 +104,7 @@ begin
 					when "0010000000000" =>	estado<=lda1;
 					when "0100000000000" =>	estado<=sta1;
 					when "1000000000000" =>	estado<=fetch1;				
-					when others 			=> estado<=estado;
+					when others 	     => estado<=estado;
 				end case;
 			when others =>
 		end case;
@@ -115,7 +119,7 @@ begin
 		when fetch3 =>	saida<=(0=>'1',others=>'0'); --liga cargaRDM
 		when fetch4 =>	saida<=(4=>'1',others=>'0'); --liga cargaRI
 		when others => cargaAC<='0'; cargaPC<='0'; incrementaPC<='0'; cargaNZ<='0'; 
-							cargaRI<='0'; cargaREM<='0'; do_read<='0'; do_write<='0'; cargaRDM<='0';
+			       cargaRI<='0'; cargaREM<='0'; do_read<='0'; do_write<='0'; cargaRDM<='0';
 	end case;
 end process;
 	
