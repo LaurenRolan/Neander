@@ -41,6 +41,8 @@ entity decoder is
            do_jmp : out  STD_LOGIC;
            do_jn : out  STD_LOGIC;
            do_jz : out  STD_LOGIC;
+           do_mul: out  STD_LOGIC;
+           do_inc: out STD_LOGIC;
            do_hlt : out  STD_LOGIC);
 end decoder;
 
@@ -60,6 +62,8 @@ begin
 		do_jmp <= '0';
 		do_jn  <= '0';
 		do_jz  <= '0';
+		do_mul <= '0';
+		do_inc <= '0';
 		do_hlt <= '0';
 		case instruction(7 downto 4) is
 			when "0000" => do_nop <= '1';
@@ -72,6 +76,8 @@ begin
 			when "1000" => do_jmp <= '1';
 			when "1001" => do_jn  <= '1';
 			when "1010" => do_jz  <= '1';
+			when "1011" => do_mul <= '1';
+			when "1100" => do_inc <= '1';
 			when "1111" => do_hlt <= '1';
 			when others => do_hlt <= '0';
 		end case;
