@@ -36,15 +36,18 @@ entity PC is
            load : in  STD_LOGIC;
 			  inc: in STD_LOGIC;
 			  clk : in  STD_LOGIC;
+			  reset: in STD_LOGIC;
            output : out  STD_LOGIC_VECTOR (7 downto 0));
 end PC;
 
 architecture Behavioral of PC is
 signal temp: STD_LOGIC_VECTOR(7 downto 0):= (others => '0') ;
 begin
-	process (clk, load, carga)
+	process (clk, load, carga, reset)
 	begin
-		if load = '1' then
+		if reset = '1' then
+			temp<="00000000";
+		elsif load = '1' then
 			temp <= carga;
 		elsif rising_edge(clk) then
 			if inc = '1' then
