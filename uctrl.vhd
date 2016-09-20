@@ -37,24 +37,8 @@ entity uctrl is
 			  reset: in std_logic;
 			  clk : in  STD_LOGIC;
 	   -- Substituindo as 15 mil portas pelo "busão" out_decoder
-           --do_nop : in  STD_LOGIC;
-           --do_sta : in  STD_LOGIC;
-           --do_lda : in  STD_LOGIC;
-           --do_add : in  STD_LOGIC;
-           --do_or : in  STD_LOGIC;
-           --do_and : in  STD_LOGIC;
-           --do_not : in  STD_LOGIC;
-           --do_jmp : in  STD_LOGIC;
-           --do_jn : in  STD_LOGIC;
-           --do_jz : in  STD_LOGIC;
-           --do_mul : in  STD_LOGIC;
-           --do_inc : in  STD_LOGIC;
-           --do_hlt : in  STD_LOGIC;
            out_decoder : in STD_LOGIC_VECTOR (12 downto 0);
-           
-           --A saída do registrador NZ é um vector de 1 downto 0. Precisa mudar o código abaixo?
-           sinal_N : in  STD_LOGIC;
-           sinal_Z : in  STD_LOGIC;
+           sinal_NZ : in  STD_LOGIC_vector(1 downto 0);
 			  cargaAC: out std_logic;
 			  selUAL: out std_logic_vector (2 downto 0);
 			  cargaPC: out std_logic;
@@ -71,14 +55,12 @@ end uctrl;
 
 architecture Behavioral of uctrl is
 
-type t_state is (fetch1,fetch2,fetch3,fetch4,sta1,lda1,add1,or1,and1,not1,jmp1,jn1,jz1,mul1,inc1,hlt1);
+type t_state is (fetch1,fetch2,fetch3,REMgetsPC,RDMgetsMEM1,RDMgetsMEM2,ACgetsULAop,
+						RDMgetsAC,MEMgetsRDM,PCgetsRDM,REMgetsRDM,didntJMP,not1,hlt1);
 signal estado: t_state;
-signal out_decoder: std_logic_vector(12 downto 0);
 signal saida: std_logic_vector(12 downto 0);
 
 begin
-
---out_decoder<= do_nop & do_sta & do_lda & do_add & do_or & do_and & do_not & do_jmp & do_jn & do_jz & do_mul & do_inc & do_hlt;
 
 process(clk, reset)
 begin
@@ -88,24 +70,38 @@ begin
 		case estado is
 			when fetch1 => estado<=fetch2;
 			when fetch2 => estado<=fetch3;
-			when fetch3 => estado<=fetch4;
-			when fetch4 =>
+			when fetch3 => 
 				case out_decoder is
 					when "0000000000001" =>	estado<=hlt1;
-					when "0000000000010" =>	estado<=inc1;
-					when "0000000000100" =>	estado<=mul1;
-					when "0000000001000" =>	estado<=jz1;
-					when "0000000010000" =>	estado<=jn1;
-					when "0000000100000" =>	estado<=jmp1;
+					when "0000000000010" =>	estado<=inc1;		--oq fazer
+					when "0000000000100" =>	estado<=mul1;		--oq fazer
+					when "0000000001000" =>	if sinal_NZ(0)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if;
+					when "0000000010000" =>	if sinal_NZ(1)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if;
+					when "0000000100000" =>	estado<=REMgetsPC;
 					when "0000001000000" =>	estado<=not1;
-					when "0000010000000" =>	estado<=and1;
-					when "0000100000000" =>	estado<=or1;
-					when "0001000000000" =>	estado<=add1;
-					when "0010000000000" =>	estado<=lda1;
-					when "0100000000000" =>	estado<=sta1;
+					when "0000010000000" =>	estado<=REMgetsPC;
+					when "0000100000000" =>	estado<=REMgetsPC;
+					when "0001000000000" =>	estado<=REMgetsPC;
+					when "0010000000000" =>	estado<=REMgetsPC;
+					when "0100000000000" =>	estado<=REMgetsPC;
 					when "1000000000000" =>	estado<=fetch1;				
 					when others 	     => estado<=estado;
 				end case;
+			when didntJMP => estado<=fetch1;
+			when REMgetsPC => estado<=RDMgetsMEM1;
+			when RDMgetsMEM1 => if(out_decoder(3)='1')or(out_decoder(4)='1')or(out_decoder(5)='1')then
+											estado<=PCgetsRDM;
+										else estado<=REMgetsRDM; end if;
+			when REMgetsRDM=> if (out_decoder(11)='1')then
+											estado<=RDMgetsAC;
+									else 	estado<=RDMgetsMEM2; end if;
+			when RDMgetsMEM2 => estado<=ACgetsULAop;
+			when ACgetsULAop => estado<=fetch1;
+			when MEMgetsRDM => estado<=fetch1;
+			when RDMgetsAC => estado<=MEMgetsRDM;
+			when PCgetsRDM => estado<=fetch1;
+			when not1 => estado<=fetch1;
+			when hlt1 => estado<=estado;
 			when others =>
 		end case;
 	end if;
@@ -114,10 +110,10 @@ process(estado)
 begin
 --AVISO: feio adiante!
 	case estado is
-		when fetch1 =>	saida<=(3=>'1',others=>'0'); --liga cargaREM
-		when fetch2 =>	saida<=(2=>'1',others=>'0'); --liga do_read
-		when fetch3 =>	saida<=(0=>'1',others=>'0'); --liga cargaRDM
-		when fetch4 =>	saida<=(4=>'1',others=>'0'); --liga cargaRI
+		when fetch1 =>	saida<=(3=>'1',2=>'1',others=>'0'); --liga cargaREM e do_read
+		when fetch2 =>	saida<=(7=>'1',0=>'1',others=>'0'); --liga cargaRDM e inc PC
+		when fetch3 => saida<=(4=>'1',others=>'0'); --liga cargaRI
+		
 		when others => cargaAC<='0'; cargaPC<='0'; incrementaPC<='0'; cargaNZ<='0'; 
 			       cargaRI<='0'; cargaREM<='0'; do_read<='0'; do_write<='0'; cargaRDM<='0';
 	end case;
