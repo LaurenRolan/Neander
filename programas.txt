@@ -1,0 +1,31 @@
+--  Programa para soma de matrizes (endereço inicial 100) --
+// Endereçamento direto não nos deixa ser criativos, né?
+  LDA end1		|	32    	100
+  ADD end1+4		|	48	104
+  STA end1+8		|	16	108
+			|	
+  LDA end1+1		|	32	101
+  ADD end1+5		|	48	105
+  STA end1+9		|	16	109
+			|	
+  LDA end1+2		|	32	102
+  ADD end1+6		|	48	106
+  STA end1+10		|	16	110
+			|	
+  LDA end1+3		|	32	103
+  ADD end1+7		|	48	107
+  STA end1+11		|	16	111
+
+-- Programa do contador de 6 em 6 --
+  LDA end2		|	32	99
+  ADD end3 -- contém 6	|	48	251
+  STA end2		|	16	99
+  LDA end4 -- contém 6  |	32	252
+  ADD end5 -- contém -1 |	48	253
+  STA end4		|	16	252
+  JZ  endFim		|	160	endFim (com HLT)
+  JMP endComeço		|	128	endComeço
+eF HLT 			|	240
+
+-- Programa da multiplicação + incremento --
+ A ser feito.
