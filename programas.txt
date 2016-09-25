@@ -1,5 +1,5 @@
---  Programa para soma de matrizes (endereÁo inicial 100) --
-// EndereÁamento direto n„o nos deixa ser criativos, nÈ?
+--  Programa para soma de matrizes (endere√ßo inicial 100) --
+// Endere√ßamento direto n√£o nos deixa ser criativos, n√©?
   LDA end1		|	32    	100
   ADD end1+4		|	48	104
   STA end1+8		|	16	108
@@ -15,17 +15,29 @@
   LDA end1+3		|	32	103
   ADD end1+7		|	48	107
   STA end1+11		|	16	111
+  HLT			|	240
 
 -- Programa do contador de 6 em 6 --
-  LDA end2		|	32	99
-  ADD end3 -- contÈm 6	|	48	251
-  STA end2		|	16	99
-  LDA end4 -- contÈm 6  |	32	252
-  ADD end5 -- contÈm -1 |	48	253
-  STA end4		|	16	252
+  LDA end3 -- cont√©m 6	|	32 	251
+  STA end4		|	16	99
+come√ßo:  LDA end2	|	32	98
+  ADD end3 -- cont√©m 6	|	48	251
+  STA end2		|	16	98
+  LDA end4 -- cont√©m 6  |	32	99
+  DEC			|	--inst
+  STA end4		|	16	99
   JZ  endFim		|	160	endFim (com HLT)
-  JMP endComeÁo		|	128	endComeÁo
+  JMP endCome√ßo		|	128	endCome√ßo
 eF HLT 			|	240
 
--- Programa da multiplicaÁ„o + incremento --
- A ser feito.
+-- Programa da multiplica√ß√£o + decremento --
+   LDA end5 -- cont√©m 1	|	32	252
+   STA endSaida		|	16	97
+mul: MULT endEntrada	|	--inst  96
+   JZ endFim		|	160 	endFim (com HLT)
+   STA endSaida		|	16	97
+   LDA endEntrada	|	32	96
+   DEC			| 	--inst
+   STA endEntrada	|	16	96
+   JMP mul		|	128 	mul
+eF:HLT			|	240
