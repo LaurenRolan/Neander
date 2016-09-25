@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity decoder is
     Port ( instruction : in  STD_LOGIC_VECTOR (7 downto 0);
-    	   out_decoder : out STD_LOGIC_VECTOR(12 downto 0)
+    	   out_decoder : out STD_LOGIC_VECTOR(12 downto 0));
 end decoder;
 
 architecture Behavioral of decoder is
