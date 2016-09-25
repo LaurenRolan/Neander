@@ -56,7 +56,7 @@ end uctrl;
 architecture Behavioral of uctrl is
 
 type t_state is (fetch1,fetch2,fetch3,REMgetsPC,RDMgetsMEM1,RDMgetsMEM2,ACgetsULAop,
-						RDMgetsAC,MEMgetsRDM,PCgetsRDM,REMgetsRDM,didntJMP,hlt1);
+						RDMgetsAC,MEMgetsRDM,PCgetsRDM,REMgetsRDM,didntJMP,hlt1, dec1,dec2,dec3);
 signal estado: t_state;
 signal saida: std_logic_vector(12 downto 0);
 
@@ -73,7 +73,7 @@ begin
 			when fetch3 => 
 				case out_decoder is
 					when "0000000000001" =>	estado<=hlt1;
-					when "0000000000010" =>	estado<=inc1;		--oq fazer
+					when "0000000000010" =>	estado<=dec1;		--oq fazer
 					when "0000000000100" =>	estado<=mul1;		--oq fazer
 					when "0000000001000" =>	if sinal_NZ(0)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if;
 					when "0000000010000" =>	if sinal_NZ(1)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if;
@@ -101,6 +101,9 @@ begin
 			when RDMgetsAC => estado<=MEMgetsRDM;
 			when PCgetsRDM => estado<=fetch1;
 			when hlt1 => estado<=estado;
+			when dec1 => estado<=dec2;
+			when dec2 => estado<=dec3;
+			when dec3 => estado<=ACgetsULAop;
 			when others =>
 		end case;
 	end if;
@@ -116,6 +119,7 @@ begin
 		when RDMgetsMEM2 =>	saida<=(0=>'1',2=>'1',others=>'0'); --liga cargaRDM e do_read
 		when ACgetsULAop => case out_decoder is
 										when "0001000000000"=>selUAL<="000"; --x+y
+										when "0000000000010"=>selUAL<="000"; --x+y
 										when "0000010000000"=>selUAL<="001"; --x and y
 										when "0000100000000"=>selUAL<="010"; --x or y
 										when "0000001000000"=>selUAL<="011"; --not x
@@ -127,6 +131,9 @@ begin
 		when PCgetsRDM => saida<=(8=>'1',others=>'0'); --liga do_write
 		when REMgetsRDM => saida<=(5=>'1', 3=>'1', 2=>'1',others=>'0'); --liga sel, carga_rem e do_read
 		when didntJMP => saida<=(7=>'1',others=>'0'); --liga incPC
+		when dec1 => saida<=(0=>'1',others=>'0'); --liga cargaRDM
+		when dec2 => saida<=(12=>'1', 10=>'1', 9=>'1',others=>'0'); --liga cargaAC e selUAL 011(not)
+		when dec3 => saida<=(12=>'1',others=>'0'); --liga cargaAC
 		when others => saida<=(others=>'0');
 	end case;
 end process;
