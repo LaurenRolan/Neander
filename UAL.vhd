@@ -37,26 +37,29 @@ entity UAL is
            sel : in  STD_LOGIC_VECTOR (2 downto 0);
            output : out  STD_LOGIC_VECTOR (7 downto 0);
            NZ : out  STD_LOGIC_VECTOR (1 downto 0);
-           carry : out STD_LOGIC);
+           mem : out STD_LOGIC_VECTOR (7 downto 0));
 end UAL;
 
 architecture Behavioral of UAL is
-signal temporario: std_logic_vector(8 downto 0);
+signal temporario: std_logic_vector(15 downto 0);
+signal baixo: std_logic_vector(7 downto 0);
 signal N, Z : std_logic;
 begin
 	process (sel, X, Y)
 	begin
 		case sel is
-			when "000" => 	temporario <= ('0'&X) + ('0'&Y);
-			when "001" => 	temporario <= '0' & (X and Y);
-			when "010" => 	temporario <= '0' & (X or Y);
-			when "011" => 	temporario <= '0' & (not X);
-			when "100" =>	temporario <= '0' & Y;
-			when others => temporario <= "000000000";
+			when "000" => 	baixo <= X + Y; temporario <= "00000000" & baixo; -- ADD
+			when "001" => 	temporario <= "00000000" & (X and Y); -- AND
+			when "010" => 	temporario <= "00000000" & (X or Y); -- OR
+			when "011" => 	temporario <= "00000000" & (not X); -- NOT X
+			when "100" =>	temporario <= "00000000" & Y; -- Y
+			when "101" =>   temporario <= ("00000000" & X) - '1'; -- DEC AC
+			when "110" =>   temporario <= X * Y; -- MULT
+			when others => temporario <= "0000000000000000";
 		end case;
 		if temporario(7) = '1' then
 			N <= '1'; Z <= '0';
-		elsif temporario = "000000000" then
+		elsif temporario = "0000000000000000" then
 			Z <= '1'; N <= '0';
 		else Z <= '0'; N <= '0';
 		end if;
@@ -64,6 +67,6 @@ begin
 	NZ(1) <= N;
 	NZ(0) <= Z;
 	output <= temporario(7 downto 0);
-	carry <= temporario(8);
+	mem <= temporario(15 downto 8);
 end Behavioral;
 
