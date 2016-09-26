@@ -40,38 +40,62 @@ entity main is
 end main;
 
 architecture Behavioral of main is
-signal PC: STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
+signal PC, RDM: STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
+signal cargaPC, cargaRDM, wrtmem, selmux: STD_LOGIC := '0';
 variable conta: STD_LOGIC_VECTOR(3 downto 0) := (others => '0');
 begin
 	process(clk, rst)
 	begin
+		cargaPC <= '0';
+		cargaRDM <= '0';
+		wrtmem <= '0';
+		selmux <= '0';
 		if rst = '1' then
 			PC <= (others => '0');
 		elsif rising_edge(clk) then
 			if matriz = '1' then
 				case conta is
-					when "0000" => PC <= "01100100";
-										-- load PC
-										-- escreve na memória o valor dos switches
-										conta <= conta + '1';
-					when "1000" => PC <= "00000001";
-										-- load PC
-										-- roda programa
-										conta <= (others => '0');
+					when "0000" => PC <= "01100100"; -- 100
+							cargaPC <= '1'; -- load PC
+							selmux <= '0'; --seleciona PC
+							-- escreve na memÃ³ria o valor dos switches
+							cargaRDM <= '1';
+							RDM <= "0000" & switches;]
+							wrtmem <= '1';
+							conta <= conta + '1';
+					when "1000" => PC <= "00000001"; -- 01 (no 00 tem NOP)
+							cargaPC <= '1'; -- load PC
+							selmux <= '0'; --seleciona PC
+							-- roda programa
+							conta <= (others => '0');
 					when others => PC <= PC + '1';
-										-- load PC
-										-- escreve na memória o valor dos switches
-										conta <= conta + '1';
+							cargaPC <= '1'; -- load PC
+							selmux <= '0'; --seleciona PC
+							-- escreve na memÃ³ria o valor dos switches
+							cargaRDM <= '1';
+							RDM <= "0000" & switches;
+							wrtmem <= '1';
+							conta <= conta + '1';
 				end case;
 			elsif contador = '1' then
-				-- PC receb início do programa contador
-				-- load PC
+				-- PC recebe inÃ­cio do programa contador
+				PC <= "00011010"; --26
+				cargaPC <= '1';-- load PC
+				selmux <= '0'; --seleciona PC
 				-- roda programa
 			elsif fatorial = '1' then
-				-- PC recebe endereço da entrada
-				-- escreve na memória o endereço dos switches
-				-- PC recebe início do programa fatorial
-				-- load PC
+				-- PC recebe endereÃ§o da entrada
+				PC <= "01100000"; --96
+				cargaPC <= '1';
+				selmux <= '0'; --seleciona PC
+				-- escreve na memÃ³ria o valor dos switches
+				cargaRDM <= '1';
+				RDM <= "0000" & switches;
+				wrtmem <= '1';
+				-- PC recebe inÃ­cio do programa fatorial
+				PC <= "00101110"; --46
+				cargaPC <= '1'; -- load PC
+				selmux <= '0'; --seleciona PC
 			end if;
 		end if;
 	end process;
