@@ -1,43 +1,45 @@
 --  Programa para soma de matrizes (endereço inicial 100) --
 // Endereçamento direto não nos deixa ser criativos, né?
-  LDA end1		|	32    	100
-  ADD end1+4		|	48	104
-  STA end1+8		|	16	108
+  LDA end1		|	32    	100	--01 e 02
+  ADD end1+4		|	48	104     --03 e 04
+  STA end1+8		|	16	108	--05 e 06
 			|	
-  LDA end1+1		|	32	101
-  ADD end1+5		|	48	105
-  STA end1+9		|	16	109
+  LDA end1+1		|	32	101	--07 e 08
+  ADD end1+5		|	48	105	--09 e 10
+  STA end1+9		|	16	109	--11 e 12
 			|	
-  LDA end1+2		|	32	102
-  ADD end1+6		|	48	106
-  STA end1+10		|	16	110
+  LDA end1+2		|	32	102	--13 e 14
+  ADD end1+6		|	48	106	--15 e 16
+  STA end1+10		|	16	110	--17 e 18
 			|	
-  LDA end1+3		|	32	103
-  ADD end1+7		|	48	107
-  STA end1+11		|	16	111
-  HLT			|	240
+  LDA end1+3		|	32	103	--19 e 20
+  ADD end1+7		|	48	107	--21 e 22
+  STA end1+11		|	16	111	--23 e 24
+  HLT			|	240		--25
 
 -- Programa do contador de 6 em 6 --
-  LDA end3 -- contém 6	|	32 	251
-  STA end4		|	16	99
-começo:  LDA end2	|	32	98
-  ADD end3 -- contém 6	|	48	251
-  STA end2		|	16	98
-  LDA end4 -- contém 6  |	32	99
-  DEC			|	--inst
-  STA end4		|	16	99
-  JZ  endFim		|	160	endFim (com HLT)
-  JMP endComeço		|	128	endComeço
-eF HLT 			|	240
+  LDA end3 -- contém 6	|	32 	68	--26 e 27
+  STA end4		|	16	99	--28 e 29
+começo:  LDA end2	|	32	98	--30 e 31
+  ADD end3 -- contém 6	|	48	68	--32 e 33
+  STA end2		|	16	98	--34 e 35
+  LDA end4 -- contém 6  |	32	99	--36 e 37
+  DEC			|	192		--38
+  STA end4		|	16	99	--39 e 40
+  JZ  endFim		|	160	45	--41 e 42
+  JMP endComeço		|	128	30	--43 e 44
+eF HLT 			|	240		--45
 
 -- Programa da multiplicação + decremento --
-   LDA end5 -- contém 1	|	32	252
-   STA endSaida		|	16	97
-mul: MULT endEntrada	|	--inst  96
-   JZ endFim		|	160 	endFim (com HLT)
-   STA endSaida		|	16	97
-   LDA endEntrada	|	32	96
-   DEC			| 	--inst
-   STA endEntrada	|	16	96
-   JMP mul		|	128 	mul
-eF:HLT			|	240
+   LDA endEntrada	|	32	96	--46 e 47
+   STA endTemp		|	16	70	--48 e 49
+   LDA end5 -- contém 1	|	32	69	--50 e 51
+   STA endSaida		|	16	97	--52 e 53
+mul: MULT temp		|	176	70	--54 e 55
+   JZ endFim		|	160 	67	--56 e 57
+   STA endSaida		|	16	97	--58 e 59
+   LDA temp		|	32	70 	--60 e 61
+   DEC			| 	192		--62
+   STA temp		|	16	70	--63 e 64
+   JMP mul		|	128 	54	--65 e 66
+eF:HLT			|	240		--67
