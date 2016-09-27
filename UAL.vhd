@@ -35,7 +35,7 @@ entity UAL is
     Port ( X : in  STD_LOGIC_VECTOR (7 downto 0);
            Y : in  STD_LOGIC_VECTOR (7 downto 0);
            sel : in  STD_LOGIC_VECTOR (2 downto 0);
-           output : out  STD_LOGIC_VECTOR (7 downto 0);
+           saida : out  STD_LOGIC_VECTOR (7 downto 0);
            NZ : out  STD_LOGIC_VECTOR (1 downto 0);
            mem : out STD_LOGIC_VECTOR (7 downto 0));
 end UAL;
@@ -66,7 +66,7 @@ begin
 	end process;
 	NZ(1) <= N;
 	NZ(0) <= Z;
-	output <= temporario(7 downto 0);
+	saida <= temporario(7 downto 0);
 	mem <= temporario(15 downto 8);
 end Behavioral;
 
