@@ -54,16 +54,16 @@ begin
 			PC <= (others => '0');
 		elsif rising_edge(clk) then
 			if matriz = '1' then
+				conta <= conta + '1';
 				case conta is
-					when "0000" => PC <= "01100100"; -- 100
+					when "0001" => PC <= "01100100"; -- 100
 							cargaPC <= '1'; -- load PC
 							selmux <= '0'; --seleciona PC
 							-- escreve na memória o valor dos switches
 							cargaRDM <= '1';
-							RDM <= "0000" & switches;]
+							RDM <= "0000" & switches;
 							wrtmem <= '1';
-							conta <= conta + '1';
-					when "1000" => PC <= "00000001"; -- 01 (no 00 tem NOP)
+					when "1001" => PC <= "00000001"; -- 01 (no 00 tem NOP)
 							cargaPC <= '1'; -- load PC
 							selmux <= '0'; --seleciona PC
 							-- roda programa
@@ -75,7 +75,6 @@ begin
 							cargaRDM <= '1';
 							RDM <= "0000" & switches;
 							wrtmem <= '1';
-							conta <= conta + '1';
 				end case;
 			elsif contador = '1' then
 				-- PC recebe início do programa contador
