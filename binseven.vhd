@@ -55,6 +55,7 @@ begin
 			when "1101" => seven <= "1000010";	--D
 			when "1110" => seven <= "0010000";	--E
 			when "1111" => seven <= "0111000";	--F
+			when others => seven <= "1111111";
 		end case;
 	end process;
 end Behavioral;
