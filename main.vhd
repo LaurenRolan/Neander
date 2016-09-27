@@ -36,7 +36,7 @@ entity main is
            switches : in  STD_LOGIC_VECTOR (3 downto 0); -- sw3 a sw0
            clk : in  STD_LOGIC;
            rst : in  STD_LOGIC; -- btn0
-           segmentos : out  STD_LOGIC_VECTOR (7 downto 0));
+           segmentos : out  STD_LOGIC_VECTOR (6 downto 0));
 end main;
 
 architecture Behavioral of main is
