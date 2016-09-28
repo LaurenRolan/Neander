@@ -48,8 +48,7 @@ entity uctrl is
 			  selREM: out std_logic_vector (1 downto 0);
 			  cargaRI: out std_logic;
 			  cargaREM: out std_logic;
-			  do_read: out std_logic_vector(0 downto 0);
-			  do_write: out std_logic;
+			  wea: out std_logic_vector(0 downto 0);
 			  cargaRDM: out std_logic
 			  );
 end uctrl;
@@ -113,43 +112,42 @@ end process;
 process(estado,out_decoder)
 begin
 	case estado is
-		when fetch1 =>	saida<=(3=>'1',2=>'1',others=>'0'); --liga cargaREM e do_read											--
-		when fetch2 =>	saida<=(8=>'1',0=>'1',2=>'1',others=>'0'); --liga cargaRDM, inc PC e do_read						--
-		when fetch3 => saida<=(4=>'1',others=>'0'); --liga cargaRI																	--
-		when REMgetsPC => saida<=(3=>'1',others=>'0'); --liga cargaREM																--												
-		when RDMgetsMEM1 => saida<=(8=>'1',2=>'1',0=>'1',others=>'0'); --liga cargaRDM, do_read e incPC					--
-		when RDMgetsMEM2 =>	saida<=(0=>'1',2=>'1',others=>'0'); --liga cargaRDM e do_read									--
+		when fetch1 =>	saida<=(2=>'1',others=>'0'); --liga cargaREM 																	--
+		when fetch2 =>	saida<=(7=>'1',2=>'1',others=>'0'); --liga cargaRDM, inc PC													--
+		when fetch3 => saida<=(3=>'1',others=>'0'); --liga cargaRI																		--
+		when REMgetsPC => saida<=(2=>'1',others=>'0'); --liga cargaREM																	--												
+		when RDMgetsMEM1 => saida<=(7=>'1',0=>'1',others=>'0'); --liga cargaRDM, e incPC											--
+		when RDMgetsMEM2 =>	saida<=(0=>'1',others=>'0'); --liga cargaRDM																--
 		when ACgetsULAop => case out_decoder is
-										when "0001000000000"=> saida<=(13=>'1',others=>'0'); --liga cargaAC, selUAL<="000"; --x+y
-										when "0000000000010"=> saida<=(13=>'1',12=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="101"; --x--
-										when "0000010000000"=> saida<=(13=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="001"; --x and y
-										when "0000100000000"=> saida<=(13=>'1',11=>'1',others=>'0'); --liga cargaAC, selUAL<="010"; --x or y
-										when "0000001000000"=> saida<=(13=>'1',11=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="011"; --not x
-										when "0000000000100"=> saida<=(13=>'1',12=>'1',11=>'1',others=>'0'); --liga cargaAC, selUAL<="110"; --x*y
-										when others 		  => saida<=(12=>'1',others=>'0'); --selUAL<="100"; --y
+										when "0001000000000"=> saida<=(12=>'1',others=>'0'); --liga cargaAC, selUAL<="000"; --x+y
+										when "0000000000010"=> saida<=(12=>'1',11=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="101"; --x--
+										when "0000010000000"=> saida<=(12=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="001"; --x and y
+										when "0000100000000"=> saida<=(12=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="010"; --x or y
+										when "0000001000000"=> saida<=(12=>'1',10=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="011"; --not x
+										when "0000000000100"=> saida<=(12=>'1',11=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="110"; --x*y
+										when others 		  => saida<=(11=>'1',others=>'0'); --selUAL<="100"; --y
 									end case;															--
-		when RDMgetsAC => saida<=(0=>'1',14=>'1',others=>'0'); --liga cargaRDM, selRDM<=ac									--
-		when MEMgetsRDM => saida<=(1=>'1',others=>'0'); --liga do_write															--
-		when PCgetsRDM => saida<=(9=>'1',others=>'0'); --liga cargaPC																--
-		when REMgetsRDM => saida<=(5=>'1', 3=>'1', 2=>'1',others=>'0'); --liga sel, carga_rem e do_read					--
-		when didntJMP => saida<=(8=>'1',others=>'0'); --liga incPC																	--
-		when mul1 => saida<=(15=>'1',6=>'1',0=>'1',3=>'1',others=>'0'); --selRDM<=altoMUL, selREM<=250, liga cargaRDM e carga REM			 
-		when mul2 => saida<=(1=>'1',others=>'0'); --liga do_write
+		when RDMgetsAC => saida<=(0=>'1',13=>'1',others=>'0'); --liga cargaRDM, selRDM<=ac(01)									--
+		when MEMgetsRDM => saida<=(1=>'1',others=>'0'); --liga wea															--
+		when PCgetsRDM => saida<=(8=>'1',others=>'0'); --liga cargaPC																--
+		when REMgetsRDM => saida<=(4=>'1',2=>'1',others=>'0'); --selREM<=rdm(01), carga_rem					--
+		when didntJMP => saida<=(7=>'1',others=>'0'); --liga incPC																	--
+		when mul1 => saida<=(14=>'1',5=>'1',0=>'1',2=>'1',others=>'0'); --selRDM<=altoMUL(10), selREM<=250(10), liga cargaRDM e carga REM			 
+		when mul2 => saida<=(1=>'1',others=>'0'); --liga wea
 		when others => saida<=(others=>'0');
 	end case;
 end process;
 
-selRDM<=saida(15 downto 14);
-cargaAC<=saida(13);
-selUAL<=saida(12 downto 10);
-cargaPC<=saida(9);
-incrementaPC<=saida(8);
-cargaNZ<=saida(7);
-selREM<=saida(6 downto 5);
-cargaRI<=saida(4);
-cargaREM<=saida(3);
-do_read(0)<=saida(2);
-do_write<=saida(1);
+selRDM<=saida(14 downto 13);
+cargaAC<=saida(12);
+selUAL<=saida(11 downto 9);
+cargaPC<=saida(8);
+incrementaPC<=saida(7);
+cargaNZ<=saida(6);
+selREM<=saida(5 downto 4);
+cargaRI<=saida(3);
+cargaREM<=saida(2);
+wea(0)<=saida(1);
 cargaRDM<=saida(0);
 
 end Behavioral;
