@@ -56,7 +56,7 @@ end uctrl;
 architecture Behavioral of uctrl is
 
 type t_state is (fetch1,fetch2,fetch3,REMgetsPC,RDMgetsMEM1,RDMgetsMEM2,ACgetsULAop,
-						RDMgetsAC,MEMgetsRDM,PCgetsRDM,REMgetsRDM,didntJMP,hlt1, mul1,mul2);
+						RDMgetsAC,MEMgetsRDM,PCgetsRDM,REMgetsRDM,didntJMP,hlt1, mul1,mul2, fetch4);
 signal estado: t_state;
 signal saida: std_logic_vector(15 downto 0);
 
@@ -70,7 +70,8 @@ begin
 		case estado is
 			when fetch1 => estado<=fetch2;
 			when fetch2 => estado<=fetch3;
-			when fetch3 => 
+			when fetch3 => estado<=fetch4;
+			when fetch4 => 
 				case out_decoder is
 					when "0000000000001" =>	estado<=hlt1;
 					when "0000000000010" =>	estado<=ACgetsULAop;		--oq fazer
@@ -114,7 +115,7 @@ begin
 	case estado is
 		when fetch1 =>	saida<=(2=>'1',others=>'0'); --liga cargaREM 																	--
 		when fetch2 =>	saida<=(7=>'1',2=>'1',others=>'0'); --liga cargaRDM, inc PC													--
-		when fetch3 => saida<=(3=>'1',others=>'0'); --liga cargaRI																		--
+		when fetch4 => saida<=(3=>'1',others=>'0'); --liga cargaRI																		--
 		when REMgetsPC => saida<=(2=>'1',others=>'0'); --liga cargaREM																	--												
 		when RDMgetsMEM1 => saida<=(7=>'1',0=>'1',others=>'0'); --liga cargaRDM, e incPC											--
 		when RDMgetsMEM2 =>	saida<=(0=>'1',others=>'0'); --liga cargaRDM																--
