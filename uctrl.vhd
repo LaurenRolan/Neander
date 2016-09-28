@@ -48,7 +48,7 @@ entity uctrl is
 			  selREM: out std_logic_vector (1 downto 0);
 			  cargaRI: out std_logic;
 			  cargaREM: out std_logic;
-			  do_read: out std_logic;
+			  do_read: out std_logic_vector(0 downto 0);
 			  do_write: out std_logic;
 			  cargaRDM: out std_logic
 			  );
@@ -148,7 +148,7 @@ cargaNZ<=saida(7);
 selREM<=saida(6 downto 5);
 cargaRI<=saida(4);
 cargaREM<=saida(3);
-do_read<=saida(2);
+do_read(0)<=saida(2);
 do_write<=saida(1);
 cargaRDM<=saida(0);
 
