@@ -55,7 +55,7 @@ end uctrl;
 architecture Behavioral of uctrl is
 
 type t_state is (fetch1,fetch2,fetch3,REMgetsPC,RDMgetsMEM1,RDMgetsMEM2,ACgetsULAop,
-						RDMgetsAC,MEMgetsRDM,PCgetsRDM,REMgetsRDM,didntJMP,hlt1, mul1,mul2, fetch4,fetch5);
+						RDMgetsAC,MEMgetsRDM,PCgetsRDM,REMgetsRDM,didntJMP,hlt1, mul1,mul2, fetch4,fetch5,REMgetsPC2,RDMgetsMEM3);
 signal estado: t_state;
 signal saida: std_logic_vector(15 downto 0);
 
@@ -90,14 +90,16 @@ begin
 					when others 	     => estado<=estado;
 				end case;
 			when didntJMP => estado<=fetch1;
-			when REMgetsPC => estado<=RDMgetsMEM1;
+			when REMgetsPC => estado<=REMgetsPC2;
+			when REMgetsPC2 => estado<=RDMgetsMEM1;
 			when RDMgetsMEM1 => if(out_decoder(3)='1')or(out_decoder(4)='1')or(out_decoder(5)='1')then
 											estado<=PCgetsRDM;
 										else estado<=REMgetsRDM; end if;
 			when REMgetsRDM=> if (out_decoder(11)='1')then
 											estado<=RDMgetsAC;
 									else 	estado<=RDMgetsMEM2; end if;
-			when RDMgetsMEM2 => estado<=ACgetsULAop;
+			when RDMgetsMEM2 => estado<=RDMgetsMEM3;
+			when RDMgetsMEM3 => estado<=ACgetsULAop;
 			when ACgetsULAop => if (out_decoder(2)='1')then
 											estado<=mul1;
 									else 	estado<=fetch1; end if;
@@ -119,8 +121,10 @@ begin
 		when fetch3 =>	saida<=(0=>'1',others=>'0'); --liga cargaRDM	
 		when fetch4 => saida<=(3=>'1',others=>'0'); --liga cargaRI																		--
 		when REMgetsPC => saida<=(2=>'1',others=>'0'); --liga cargaREM																	--												
+		when REMgetsPC2 => saida<=(others=>'0'); --wait																	--												
 		when RDMgetsMEM1 => saida<=(7=>'1',0=>'1',others=>'0'); --liga cargaRDM, e incPC											--
-		when RDMgetsMEM2 =>	saida<=(0=>'1',others=>'0'); --liga cargaRDM																--
+		when RDMgetsMEM2 =>	saida<=(others=>'0'); --wait															--
+		when RDMgetsMEM3 =>	saida<=(0=>'1',others=>'0'); --liga cargaRDM																--
 		when ACgetsULAop => case out_decoder is
 										when "0001000000000"=> saida<=(6=>'1',12=>'1',others=>'0'); --liga cargaAC, selUAL<="000"; --x+y
 										when "0000000000010"=> saida<=(6=>'1',12=>'1',11=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="101"; --x--
@@ -128,7 +132,7 @@ begin
 										when "0000100000000"=> saida<=(6=>'1',12=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="010"; --x or y
 										when "0000001000000"=> saida<=(6=>'1',12=>'1',10=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="011"; --not x
 										when "0000000000100"=> saida<=(6=>'1',12=>'1',11=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="110"; --x*y
-										when others 		  => saida<=(6=>'1',11=>'1',others=>'0'); --selUAL<="100"; --y
+										when others 		  => saida<=(6=>'1',12=>'1', 11=>'1',others=>'0'); --selUAL<="100"; --y
 									end case;															--
 		when RDMgetsAC => saida<=(0=>'1',13=>'1',others=>'0'); --liga cargaRDM, selRDM<=ac(01)									--
 		when MEMgetsRDM => saida<=(1=>'1',others=>'0'); --liga wea															--
