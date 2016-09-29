@@ -33,7 +33,7 @@ eF HLT 			|	240		--45
 -- Programa da multiplicação + decremento --
    LDA endEntrada	|	32	96	--46 e 47
    STA endTemp		|	16	70	--48 e 49
-   LDA end5 -- contém 1	|	32	69	--50 e 51
+   LDA end5 -- contém 1	|	32	71	--50 e 51
    STA endSaida		|	16	97	--52 e 53
 mul: MULT temp		|	176	70	--54 e 55
    JZ endFim		|	160 	67	--56 e 57
@@ -41,5 +41,6 @@ mul: MULT temp		|	176	70	--54 e 55
    LDA temp		|	32	70 	--60 e 61
    DEC			| 	192		--62
    STA temp		|	16	70	--63 e 64
-   JMP mul		|	128 	54	--65 e 66
-eF:HLT			|	240		--67
+   LDA saida		|	32	97	--65 e 66
+   JMP mul		|	128 	54	--67 e 68
+eF:HLT			|	240		--69
