@@ -19,15 +19,15 @@
 
 -- Programa do contador de 6 em 6 --
   LDA end3 -- contém 6	|	32 	68	--26 e 27
-  STA end4		|	16	99	--28 e 29
-começo:  LDA end2	|	32	98	--30 e 31
-  ADD end3 -- contém 6	|	48	68	--32 e 33
-  STA end2		|	16	98	--34 e 35
-  LDA end4 -- contém 6  |	32	99	--36 e 37
-  DEC			|	192		--38
-  STA end4		|	16	99	--39 e 40
-  JZ  endFim		|	160	45	--41 e 42
-  JMP endComeço		|	128	30	--43 e 44
+  ADD end3 --12		|	48	68	--28 e 29
+  ADD end3 --18		|	48	68	--30 e 31
+  ADD end3 --24		|	48	68	--32 e 33
+  ADD end3 --30		|	48	68	--34 e 35
+  ADD end3 --36		|	48	68	--36 e 37
+  nop			|	00		--38
+  nop nop		|	00	00	--39 e 40
+  nop  nop		|	00	00	--41 e 42
+  nop nop		|	00	00	--43 e 44
 eF HLT 			|	240		--45
 
 -- Programa da multiplicação + decremento --
