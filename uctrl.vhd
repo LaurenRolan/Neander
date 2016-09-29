@@ -73,20 +73,20 @@ begin
 			when fetch4 => estado<=fetch5;
 			when fetch5 => 
 				case out_decoder is
-					when "0000000000001" =>	estado<=hlt1;
-					when "0000000000000" => estado<=hlt1;
-					when "0000000000010" =>	estado<=ACgetsULAop;		
-					when "0000000000100" =>	estado<=REMgetsPC;		
-					when "0000000001000" =>	if sinal_NZ(0)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if;
-					when "0000000010000" =>	if sinal_NZ(1)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if;
-					when "0000000100000" =>	estado<=REMgetsPC;
-					when "0000001000000" =>	estado<=ACgetsULAop;
-					when "0000010000000" =>	estado<=REMgetsPC;
-					when "0000100000000" =>	estado<=REMgetsPC;
-					when "0001000000000" =>	estado<=REMgetsPC;
-					when "0010000000000" =>	estado<=REMgetsPC;
-					when "0100000000000" =>	estado<=REMgetsPC;
-					when "1000000000000" =>	estado<=fetch1;				
+					when "0000000000001" =>	estado<=hlt1;		--hlt
+					when "0000000000000" => estado<=hlt1;		--hlt
+					when "0000000000010" =>	estado<=ACgetsULAop;	--dec
+					when "0000000000100" =>	estado<=REMgetsPC;	--mul
+					when "0000000001000" =>	if sinal_NZ(0)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if; --jz
+					when "0000000010000" =>	if sinal_NZ(1)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if; --jn
+					when "0000000100000" =>	estado<=REMgetsPC;	--jmp
+					when "0000001000000" =>	estado<=ACgetsULAop;	--not
+					when "0000010000000" =>	estado<=REMgetsPC;	--and
+					when "0000100000000" =>	estado<=REMgetsPC;	--or
+					when "0001000000000" =>	estado<=REMgetsPC;	--add
+					when "0010000000000" =>	estado<=REMgetsPC;	--lda
+					when "0100000000000" =>	estado<=REMgetsPC;	--sta
+					when "1000000000000" =>	estado<=fetch1;		--nop		
 					when others 	     => estado<=estado;
 				end case;
 			when didntJMP => estado<=fetch1;
