@@ -48,7 +48,7 @@ begin
 	process (sel, X, Y)
 	begin
 		case sel is
-			when "000" => 	baixo <= X + Y; temporario <= "00000000" & baixo; -- ADD
+			when "000" => 	temporario(7 downto 0) <= X + Y; temporario(15 downto 8) <= "00000000"; -- ADD
 			when "001" => 	temporario <= "00000000" & (X and Y); -- AND
 			when "010" => 	temporario <= "00000000" & (X or Y); -- OR
 			when "011" => 	temporario <= "00000000" & (not X); -- NOT X
