@@ -42,7 +42,6 @@ end UAL;
 
 architecture Behavioral of UAL is
 signal temporario: std_logic_vector(15 downto 0);
-signal baixo: std_logic_vector(7 downto 0);
 signal N, Z : std_logic;
 begin
 	process (sel, X, Y)
