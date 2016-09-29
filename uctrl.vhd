@@ -36,7 +36,6 @@ entity uctrl is
     Port ( 
 			  reset: in std_logic;
 			  clk : in  STD_LOGIC;
-	   -- Substituindo as 15 mil portas pelo "busão" out_decoder
            out_decoder : in STD_LOGIC_VECTOR (12 downto 0);
            sinal_NZ : in  STD_LOGIC_vector(1 downto 0);
 			  selRDM: out std_logic_vector (1 downto 0);
@@ -56,7 +55,7 @@ end uctrl;
 architecture Behavioral of uctrl is
 
 type t_state is (fetch1,fetch2,fetch3,REMgetsPC,RDMgetsMEM1,RDMgetsMEM2,ACgetsULAop,
-						RDMgetsAC,MEMgetsRDM,PCgetsRDM,REMgetsRDM,didntJMP,hlt1, mul1,mul2, fetch4);
+						RDMgetsAC,MEMgetsRDM,PCgetsRDM,REMgetsRDM,didntJMP,hlt1, mul1,mul2, fetch4,fetch5);
 signal estado: t_state;
 signal saida: std_logic_vector(15 downto 0);
 
@@ -71,11 +70,13 @@ begin
 			when fetch1 => estado<=fetch2;
 			when fetch2 => estado<=fetch3;
 			when fetch3 => estado<=fetch4;
-			when fetch4 => 
+			when fetch4 => estado<=fetch5;
+			when fetch5 => 
 				case out_decoder is
 					when "0000000000001" =>	estado<=hlt1;
-					when "0000000000010" =>	estado<=ACgetsULAop;		--oq fazer
-					when "0000000000100" =>	estado<=REMgetsPC;		--oq fazer
+					when "0000000000000" => estado<=hlt1;
+					when "0000000000010" =>	estado<=ACgetsULAop;		
+					when "0000000000100" =>	estado<=REMgetsPC;		
 					when "0000000001000" =>	if sinal_NZ(0)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if;
 					when "0000000010000" =>	if sinal_NZ(1)='1' then estado<=REMgetsPC;else estado<=didntJMP;end if;
 					when "0000000100000" =>	estado<=REMgetsPC;
@@ -103,7 +104,7 @@ begin
 			when MEMgetsRDM => estado<=fetch1;
 			when RDMgetsAC => estado<=MEMgetsRDM;
 			when PCgetsRDM => estado<=fetch1;
-			when hlt1 => estado<=estado;
+			when hlt1 => estado<=hlt1;
 			when mul1 => estado<=mul2;
 			when mul2 => estado<=fetch1;
 			when others =>
@@ -114,19 +115,20 @@ process(estado,out_decoder)
 begin
 	case estado is
 		when fetch1 =>	saida<=(2=>'1',others=>'0'); --liga cargaREM 																	--
-		when fetch2 =>	saida<=(7=>'1',2=>'1',others=>'0'); --liga cargaRDM, inc PC													--
+		when fetch2 =>	saida<=(7=>'1',others=>'0'); -- inc PC													--
+		when fetch3 =>	saida<=(0=>'1',others=>'0'); --liga cargaRDM	
 		when fetch4 => saida<=(3=>'1',others=>'0'); --liga cargaRI																		--
 		when REMgetsPC => saida<=(2=>'1',others=>'0'); --liga cargaREM																	--												
 		when RDMgetsMEM1 => saida<=(7=>'1',0=>'1',others=>'0'); --liga cargaRDM, e incPC											--
 		when RDMgetsMEM2 =>	saida<=(0=>'1',others=>'0'); --liga cargaRDM																--
 		when ACgetsULAop => case out_decoder is
-										when "0001000000000"=> saida<=(12=>'1',others=>'0'); --liga cargaAC, selUAL<="000"; --x+y
-										when "0000000000010"=> saida<=(12=>'1',11=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="101"; --x--
-										when "0000010000000"=> saida<=(12=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="001"; --x and y
-										when "0000100000000"=> saida<=(12=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="010"; --x or y
-										when "0000001000000"=> saida<=(12=>'1',10=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="011"; --not x
-										when "0000000000100"=> saida<=(12=>'1',11=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="110"; --x*y
-										when others 		  => saida<=(11=>'1',others=>'0'); --selUAL<="100"; --y
+										when "0001000000000"=> saida<=(6=>'1',12=>'1',others=>'0'); --liga cargaAC, selUAL<="000"; --x+y
+										when "0000000000010"=> saida<=(6=>'1',12=>'1',11=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="101"; --x--
+										when "0000010000000"=> saida<=(6=>'1',12=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="001"; --x and y
+										when "0000100000000"=> saida<=(6=>'1',12=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="010"; --x or y
+										when "0000001000000"=> saida<=(6=>'1',12=>'1',10=>'1',9=>'1',others=>'0'); --liga cargaAC, selUAL<="011"; --not x
+										when "0000000000100"=> saida<=(6=>'1',12=>'1',11=>'1',10=>'1',others=>'0'); --liga cargaAC, selUAL<="110"; --x*y
+										when others 		  => saida<=(6=>'1',11=>'1',others=>'0'); --selUAL<="100"; --y
 									end case;															--
 		when RDMgetsAC => saida<=(0=>'1',13=>'1',others=>'0'); --liga cargaRDM, selRDM<=ac(01)									--
 		when MEMgetsRDM => saida<=(1=>'1',others=>'0'); --liga wea															--
