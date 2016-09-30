@@ -32,10 +32,14 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity neanderbox is
     Port ( reset : in  STD_LOGIC;
            clk : in  STD_LOGIC;
+			  
            douta : in  STD_LOGIC_VECTOR (7 downto 0);
+			  
+			  start:  in  std_logic_vector(7 downto 0);			--endereço de reset do pc
 			  out_ac: out std_logic_vector(7 downto 0);
 			  out_pc: out std_logic_vector(7 downto 0);
 			  out_ri: out std_logic_vector(7 downto 0);
+			  
 			  wea: out std_logic_vector(0 downto 0);
            dina : out  STD_LOGIC_VECTOR (7 downto 0);
            addressa : out  STD_LOGIC_VECTOR (7 downto 0));
@@ -53,7 +57,7 @@ begin
 
 AC: entity work.reg8 port map(saidaUAL,cargaAC,clk,reset,saida_ac);
 cunit: entity work.uctrl port map(reset,clk,out_decoder,sinal_NZ,selRDM,cargaAC,selUAL,cargaPC,incrementaPC,cargaNZ,selREM,cargaRI,cargaREM,wea,cargaRDM);
-PCreg: entity work.PC port map(saida_rdm,cargaPC,incrementaPC,clk,reset,saida_pc);
+PCreg: entity work.PC port map(start,saida_rdm,cargaPC,incrementaPC,clk,reset,saida_pc);
 UAL: entity work.UAL port map(saida_ac,saida_rdm,selUAL,saidaUAL,entradaNZ,mem250);
 NZreg: entity work.reg2 port map(entradaNZ,cargaNZ,clk,reset,sinal_NZ);
 RIreg: entity work.reg8 port map(saida_rdm,cargaRI,clk,reset,saida_ri);
