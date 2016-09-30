@@ -32,7 +32,9 @@ USE IEEE.STD_LOGIC_UNSIGNED.ALL;
 --use UNISIM.VComponents.all;
 
 entity PC is
-    Port ( carga : in  STD_LOGIC_VECTOR (7 downto 0);
+    Port ( 
+			  start: in std_logic_vector(7 downto 0);
+			  carga : in  STD_LOGIC_VECTOR (7 downto 0);
            load : in  STD_LOGIC;
 			  inc: in STD_LOGIC;
 			  clk : in  STD_LOGIC;
@@ -46,7 +48,7 @@ begin
 	process (clk, load, carga, reset)
 	begin
 		if reset = '1' then
-			temp<="00000000";
+			temp<=start;
 		elsif load = '1' then
 			temp <= carga;
 		elsif rising_edge(clk) then
