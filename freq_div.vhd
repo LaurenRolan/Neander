@@ -40,12 +40,12 @@ architecture Behavioral of freq_div is
 begin
 
 process (clk,reset)
-variable counter: integer range 0 to 50000000;
+variable counter: integer range 0 to 2499999; -- 20Hz
 begin  
    if reset = '1' then
       counter:=0;
    elsif (clk'event and clk = '1') then
-      if counter=50000000 then
+      if counter=2499999 then
 			saida<='1';
 			counter:=0;
 		else
