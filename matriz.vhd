@@ -65,6 +65,9 @@ begin
 				web<="1";
 			end if;			
 		end if;
+		if(rstFSM<='1')then
+			acc<="0000" & switches;
+		end if;
 	end process;
 DEBOUNCER1:entity work.debouncer port map (insere,clk,insere_out);
 DEBOUNCER2:entity work.debouncer port map (fim,clk,fim_out);
