@@ -49,7 +49,7 @@ signal rstFSM, clk_x: std_logic := '1';
 signal insere_out,fim_out:std_logic := '0';
 signal ant : std_logic := '0';
 signal web : std_logic_vector (0 downto 0) := "0";
-signal address, data, acc : std_logic_vector (7 downto 0) := "00000000";
+signal address, data, acc,acc2 : std_logic_vector (7 downto 0) := "00000000";
 begin
 	process (clk)
 	begin
@@ -66,13 +66,14 @@ begin
 			end if;			
 		end if;
 		if(rstFSM<='1')then
-			acc<="0000" & switches;
+			acc2<="0000" & switches;
+		else acc2<=acc;
 		end if;
 	end process;
 DEBOUNCER1:entity work.debouncer port map (insere,clk,insere_out);
 DEBOUNCER2:entity work.debouncer port map (fim,clk,fim_out);
 DIVFREQ: entity work.freq_div port map (clk, rst, clk_x);
 NEANDER: entity work.neander2 port map (address, data, web, clk_x, rstFSM, acc, pc);
-VISOR:	entity work.visor port map (acc, clk, anodos, segmentos);
+VISOR:	entity work.visor port map (acc2, clk, anodos, segmentos);
 end Behavioral;
 
