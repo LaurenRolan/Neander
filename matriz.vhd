@@ -62,7 +62,7 @@ begin
 				rstFSM<='1';
 				data<="0000" & switches;
 				address <= "00011110"+("000"&ender);
-				web<='1';
+				web<="1";
 			end if;			
 		end if;
 	end process;
