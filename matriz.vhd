@@ -34,19 +34,19 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 entity matriz is
     Port ( --insere : in  STD_LOGIC; -- switch 7
            clk : in  STD_LOGIC;
-			  rst : in STD_LOGIC; -- switch 7
-			  insere: in std_logic; --botao [?]
-			  fim: in std_logic;		--botao [?]
-			  ender: in std_logic_vector(2 downto 0);--switches 6 downto 4
+	   rst : in STD_LOGIC; -- switch 7
+	   insere: in std_logic; --botao [?]
+	   fim: in std_logic;		--botao [?]
+	   ender: in std_logic_vector(2 downto 0);--switches 6 downto 4
            anodos : out  STD_LOGIC_VECTOR (3 downto 0);
            segmentos : out  STD_LOGIC_VECTOR (6 downto 0);
            switches : in  STD_LOGIC_VECTOR (3 downto 0); -- switches 3 downto 0
-			  pc : out STD_LOGIC_VECTOR (7 DOWNTO 0));
+	   pc : out STD_LOGIC_VECTOR (7 DOWNTO 0));
 end matriz;
 
 architecture Behavioral of matriz is
 signal rstFSM, clk_x: std_logic := '1';
-signal insere_out,fim_out:std_logic;
+signal insere_out,fim_out:std_logic := '0';
 signal ant : std_logic := '0';
 signal web : std_logic_vector (0 downto 0) := "0";
 signal address, data, acc : std_logic_vector (7 downto 0) := "00000000";
@@ -60,7 +60,7 @@ begin
 				rstFSM<='0';
 			elsif(insere_out='1' and rstFSM='1')then
 				rstFSM<='1';
-				data<=data <= "0000" & switches;
+				data<="0000" & switches;
 				address <= "00011110"+("000"&ender);
 				web<='1';
 			end if;			
