@@ -52,6 +52,7 @@ if(rising_edge(clk))then
 		counter:=0;
 		running<='0';
 		end if;
+	else saida<='0';
 	end if;
 end if;
 end process;
