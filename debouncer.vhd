@@ -37,9 +37,9 @@ end debouncer;
 
 architecture Behavioral of debouncer is
 signal running:std_logic:='0';
-variable counter: integer range 0 to 50000000:=0;
 begin
 process(botao,clk)
+variable counter: integer range 0 to 50000000:=0;
 begin
 if(rising_edge(clk))then
 	if(running='0' and botao='1')then
@@ -47,9 +47,9 @@ if(rising_edge(clk))then
 		saida<='1';
 	elsif(running='1')then
 	saida<='0';
-	counter<=counter+1;
+	counter:=counter+1;
 		if(counter=50000000)then
-		counter<=0;
+		counter:=0;
 		running<='0';
 		end if;
 	end if;
