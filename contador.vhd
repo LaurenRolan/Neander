@@ -40,7 +40,8 @@ end contador;
 architecture Behavioral of contador is
 signal rstFSM : std_logic := '1';
 signal clk_x : std_logic;
-signal acc : std_logic_vector (7 downto 0) := "00000000";
+signal web : std_logic_vector (0 downto 0) := "0";
+signal acc, data, address, sai_mem, pc: std_logic_vector (7 downto 0) := "00000000";
 begin
 	process(clk, rst, start)
 	begin
@@ -52,7 +53,7 @@ begin
 		end if;
 	end process;
 DIVFREQ: entity work.freq_div port map (clk, rst, clk_x);
-NEANDER:	entity work.neander port map (clk_x, rstFSM, acc);
+NEANDER:	entity work.neander2 port map (address, data, web, clk_x, rstFSM, acc, pc);
 VISOR:	entity work.visor port map (acc, clk, anodos, segmentos);
 end Behavioral;
 

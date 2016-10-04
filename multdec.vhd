@@ -31,24 +31,23 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity matriz is
-    Port ( 
-				clk : in  STD_LOGIC;
-				rst : in STD_LOGIC; -- switch 7
-				insere: in std_logic; --botao 0
-				fim: in std_logic;		--botao 1
-				ender: in std_logic_vector(2 downto 0);--switches 6 downto 4
-				anodos : out  STD_LOGIC_VECTOR (3 downto 0);
-				segmentos : out  STD_LOGIC_VECTOR (6 downto 0);
-				switches : in  STD_LOGIC_VECTOR (3 downto 0); -- switches 3 downto 0
-				pc : out STD_LOGIC_VECTOR (7 DOWNTO 0));
-end matriz;
+entity multdec is
+    Port (
+           clk : in  STD_LOGIC;
+	   rst : in STD_LOGIC; -- switch 7
+	   insere: in std_logic; --botao [?]
+	   fim: in std_logic;		--botao [?]
+           anodos : out  STD_LOGIC_VECTOR (3 downto 0);
+           segmentos : out  STD_LOGIC_VECTOR (6 downto 0);
+           switches : in  STD_LOGIC_VECTOR (3 downto 0); -- switches 3 downto 0
+	   pc : out STD_LOGIC_VECTOR (7 DOWNTO 0));
+end multdec;
 
-architecture Behavioral of matriz is
+architecture Behavioral of multdec is
 signal rstFSM, clk_x: std_logic := '1';
 signal insere_out,fim_out:std_logic := '0';
 signal web : std_logic_vector (0 downto 0) := "0";
-signal address, data, acc, acc2 : std_logic_vector (7 downto 0) := "00000000";
+signal address, data, acc : std_logic_vector (7 downto 0) := "00000000";
 begin
 	process (clk, rst)
 	begin
@@ -59,15 +58,11 @@ begin
 				rstFSM<='0';
 			elsif(insere_out='1' and rstFSM='1')then
 				rstFSM<='1';
-				data<="0000" & switches;
-				address <= "00011110"+("000"&ender);
+				data <= "0000" & switches;
+				address <= "00001011";
 				web<="1";
 			end if;			
 		end if;
-		if(rstFSM<='1')then
-			acc2<="0000" & switches;
-		else acc2<=acc;
-end if;
 	end process;
 DEBOUNCER1:entity work.debouncer port map (insere,clk,insere_out);
 DEBOUNCER2:entity work.debouncer port map (fim,clk,fim_out);
@@ -75,3 +70,5 @@ DIVFREQ: entity work.freq_div port map (clk, rst, clk_x);
 NEANDER: entity work.neander2 port map (address, data, web, clk_x, rstFSM, acc, pc);
 VISOR:	entity work.visor port map (acc, clk, anodos, segmentos);
 end Behavioral;
+
+
