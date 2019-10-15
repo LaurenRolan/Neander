@@ -1,5 +1,5 @@
 # Neander
-Realizado por Gabriel Niemiec e Lauren Rolan.
+Realizado por [Gabriel Niemiec](https://github.com/cdflion) e [Lauren Rolan](https://github.com/LaurenRolan).
 
 Trabalho feito para a disciplina de Sistemas Digitais em 2016/2.
 
