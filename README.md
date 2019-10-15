@@ -16,6 +16,7 @@ Criar a descrição do circuito do computador NEANDER, com suas onze instruçõe
  * JN endereço
  * JZ endereço
  * HLT
+
 As instruções adicionadas são
  * MULT endereço - multiplicação dos valores do registrador A e _endereço_ 
  * DEC - decremento do registrador A
