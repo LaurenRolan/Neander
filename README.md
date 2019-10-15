@@ -4,7 +4,7 @@ Realizado por Gabriel Niemiec e Lauren Rolan.
 Trabalho feito para a disciplina de Sistemas Digitais em 2016/2.
 
 ## Objetivo
-Criar a descrição do circuito do computador NEANDER, com suas onze instruções elementares :
+Criar a descrição do circuito do computador [NEANDER](http://www.inf.ufrgs.br/arq/wiki/doku.php?id=insneander), com suas onze instruções elementares :
  * NOP
  * STA endereço
  * LDA endereço
